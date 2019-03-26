@@ -1,10 +1,139 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
+<html lang="ru">
+<head>
 
-  </body>
+	<meta charset="utf-8">
+
+	<title></title>
+	<meta name="description" content="">
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="format-detection" content="address=no">
+
+	<meta property="og:image" content="path/to/image.jpg">
+	<link rel="shortcut icon" href="img/favicon/favicon.ico" type="image/x-icon">
+	<link rel="apple-touch-icon" href="img/favicon/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="img/favicon/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="img/favicon/apple-touch-icon-114x114.png">
+
+	<!-- Chrome, Firefox OS and Opera -->
+	<meta name="theme-color" content="#000">
+	<!-- Windows Phone -->
+	<meta name="msapplication-navbutton-color" content="#000">
+	<!-- iOS Safari -->
+	<meta name="apple-mobile-web-app-status-bar-style" content="#000">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300&amp;subset=cyrillic" rel="stylesheet">
+	<link rel="stylesheet" href="css/libs.css">
+	<link rel="stylesheet" href="css/css.css">
+	<link rel="stylesheet" href="css/main.css">
+	<script type="text/javascript" src="js/libs.js" defer></script>
+	<script type="text/javascript" src="js/js.js" defer></script>
+</head>
+<body>
+	<div class="scroll">
+		<i class="fa fa-chevron-up" aria-hidden="true"></i>
+	</div>
+
+	<section class="pageCanvas">
+		<div class="pageCanvas-container">
+			<div class="header">
+				<img src="img/header-bg.png" alt="">
+			</div>
+			<div class="content">
+				<div class="content__inner content-left">
+					<div class="title">Выставки</div>
+					<ul>
+						<li>без давки</li>
+						<li>личные связи </li>
+						<li>какое бывает время</li>
+						<li>победа над белым</li>
+					</ul>
+				</div>
+				<div class="content__inner content-right">
+					<div class="title">Лекторий</div>
+					<ul>
+						<li>что дальше?</li>
+						<li>новые имена</li>
+						<li>в поисках идентичности</li>
+						<li>о диссонансах</li>
+					</ul>
+				</div>
+				<canvas id="draw" width="1440" height="644"></canvas>
+			</div>
+
+			<div class="footer">
+				<div class="title">Контакты</div>
+				<div class="text">Улица Пятницкая, дом 17</div>
+				<a href="tel:+74997221819" class="phone">+7 499 722 18 19</a>
+			</div>
+		</div>
+	</section>
+	<script>
+		const canvas = document.querySelector("#draw");
+		const ctx = canvas.getContext("2d");
+
+		let isDrawing = false;
+		let lastX = 0;
+		let lastY = 0;
+		let hue = 0;
+		let direction = true;
+
+		function setCanvas() {
+			// Configure canvas
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+
+			// Configure context
+			ctx.lineJoin = "round";
+			ctx.lineCap = "round";
+		}
+
+		function updatePosition(event) {
+			[lastX, lastY] = [event.offsetX, event.offsetY];
+		}
+
+		function incrementHue() {
+			hue++;
+			if (hue > 360) {
+				hue = 0;
+			}
+		}
+
+		function draw(event) {
+			if (!isDrawing) return; // Return if mouse is not down
+
+			ctx.beginPath();
+			ctx.moveTo(lastX, lastY);
+			ctx.lineTo(event.offsetX, event.offsetY);
+			ctx.stroke();
+			ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+
+			updatePosition(event);
+			incrementHue();
+
+			// Varying width
+			if (ctx.lineWidth >= 40 || ctx.lineWidth <= 1) {
+				direction = !direction;
+			}
+			if (direction) {
+				ctx.lineWidth++;
+			} else {
+				ctx.lineWidth--;
+			}
+		}
+
+		// Event listeners
+		document.addEventListener("DOMContentLoaded", setCanvas);
+		canvas.addEventListener("mousedown", event => {
+			isDrawing = true;
+			updatePosition(event);
+		});
+		canvas.addEventListener("mousemove", draw);
+		canvas.addEventListener("mouseup", () => (isDrawing = false));
+		canvas.addEventListener("mouseout", () => (isDrawing = false));
+
+	</script>
+</body>
 </html>
